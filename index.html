@@ -1,0 +1,383 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Attendance System</title>
+  <link rel="stylesheet" href="style.css">
+</head><body><div class="app">  <!-- SIDEBAR -->  <aside class="sidebar"><div class="logo">
+  <div class="logo-icon">EA</div>
+  <div>
+    <h2>Employee</h2>
+    <span>Attendance</span>
+  </div>
+</div>
+
+<nav>
+  <button class="nav-btn active" data-page="dashboard">
+    🏠 Dashboard
+  </button>
+
+  <button class="nav-btn" data-page="employees">
+    👥 Employees
+  </button>
+
+  <button class="nav-btn" data-page="attendance">
+    📅 Attendance
+  </button>
+
+  <button class="nav-btn" data-page="reports">
+    📊 Reports
+  </button>
+</nav>
+
+  </aside>  <!-- MAIN -->  <main class="main"><header class="topbar">
+
+  <div>
+    <h1 id="pageTitle">Dashboard</h1>
+    <p>Employee Attendance Management System</p>
+  </div>
+
+  <div id="currentDate" class="date-box"></div>
+
+</header>
+
+
+<!-- DASHBOARD -->
+<section id="dashboard" class="page active">
+
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon">👥</div>
+      <div>
+        <span>Total Employees</span>
+        <strong id="totalEmployees">0</strong>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🟢</div>
+      <div>
+        <span>Present Today</span>
+        <strong id="presentToday">0</strong>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">❌</div>
+      <div>
+        <span>Absent Today</span>
+        <strong id="absentToday">0</strong>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon">🕐</div>
+      <div>
+        <span>Late Today</span>
+        <strong id="lateToday">0</strong>
+      </div>
+    </div>
+
+  </div>
+
+
+  <div class="card">
+
+    <div class="card-header">
+      <h2>Today's Attendance</h2>
+
+      <button class="primary-btn" onclick="showPage('attendance')">
+        View Attendance
+      </button>
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+
+        <tbody id="dashboardAttendance"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- EMPLOYEES -->
+<section id="employees" class="page">
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h2>Employee Management</h2>
+
+      <button
+        type="button"
+        class="primary-btn"
+        id="addEmployeeBtn">
+        + Add Employee
+      </button>
+
+    </div>
+
+
+    <div class="search-box">
+
+      <input
+        type="text"
+        id="employeeSearch"
+        placeholder="Search Employee...">
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Position</th>
+            <th>Join Date</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="employeeTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ATTENDANCE -->
+<section id="attendance" class="page">
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h2>Daily Attendance</h2>
+
+      <div class="controls">
+
+        <input
+          type="date"
+          id="attendanceDate">
+
+        <button
+          type="button"
+          class="primary-btn"
+          id="markAllBtn">
+          Mark All Present
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Check In</th>
+            <th>Check Out</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+
+        <tbody id="attendanceTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- REPORTS -->
+<section id="reports" class="page">
+
+  <div class="card">
+
+    <div class="card-header">
+
+      <h2>Attendance Reports</h2>
+
+      <div class="controls">
+
+        <input
+          type="month"
+          id="reportMonth">
+
+        <button
+          type="button"
+          class="primary-btn"
+          id="generateReportBtn">
+          Generate
+        </button>
+
+        <button
+          type="button"
+          class="secondary-btn"
+          id="exportBtn">
+          Export CSV
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Employee ID</th>
+            <th>Name</th>
+            <th>Present</th>
+            <th>Absent</th>
+            <th>Late</th>
+            <th>Leave</th>
+            <th>Total Records</th>
+          </tr>
+
+        </thead>
+
+        <tbody id="reportTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+  </main></div><!-- ADD EMPLOYEE MODAL --><div class="modal" id="employeeModal">  <div class="modal-content"><div class="modal-header">
+
+  <h2>Add Employee</h2>
+
+  <button
+    type="button"
+    id="closeModalBtn">
+    ×
+  </button>
+
+</div>
+
+
+<form id="employeeForm">
+
+  <label>Employee ID</label>
+
+  <input
+    type="text"
+    id="employeeId"
+    placeholder="Example: EMP001"
+    required>
+
+
+  <label>Employee Name</label>
+
+  <input
+    type="text"
+    id="employeeName"
+    placeholder="Enter employee name"
+    required>
+
+
+  <label>Phone Number</label>
+
+  <input
+    type="tel"
+    id="employeePhone"
+    placeholder="Enter phone number">
+
+
+  <label>Position</label>
+
+  <input
+    type="text"
+    id="employeePosition"
+    placeholder="Example: Manager">
+
+
+  <label>Join Date</label>
+
+  <input
+    type="date"
+    id="joinDate"
+    required>
+
+
+  <label>Status</label>
+
+  <select id="employeeStatus">
+
+    <option value="Active">
+      Active
+    </option>
+
+    <option value="Inactive">
+      Inactive
+    </option>
+
+  </select>
+
+
+  <div class="modal-actions">
+
+    <button
+      type="button"
+      class="secondary-btn"
+      id="cancelModalBtn">
+      Cancel
+    </button>
+
+    <button
+      type="submit"
+      class="primary-btn">
+      Save Employee
+    </button>
+
+  </div>
+
+</form>
+
+  </div></div><script src="script.js"></script></body>
+</html>
