@@ -1,0 +1,1123 @@
+/* =========================================================
+EMPLOYEE PRO - ATTENDANCE & PAYROLL
+COMPLETE STYLE.CSS
+========================================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  }
+
+:root {
+--primary: #2563eb;
+--primary-dark: #1d4ed8;
+--success: #16a34a;
+--warning: #f59e0b;
+--danger: #dc2626;
+--purple: #7c3aed;
+--cyan: #0891b2;
+--dark: #111827;
+--text: #1f2937;
+--muted: #6b7280;
+--border: #e5e7eb;
+--background: #f4f7fb;
+--white: #ffffff;
+--sidebar-width: 250px;
+}
+
+body {
+font-family: Arial, Helvetica, sans-serif;
+background: var(--background);
+color: var(--text);
+min-height: 100vh;
+}
+
+/* =========================================================
+COMMON
+========================================================= */
+
+button,
+input,
+select,
+textarea {
+font-family: inherit;
+}
+
+button {
+cursor: pointer;
+}
+
+input,
+select,
+textarea {
+outline: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+border-color: var(--primary) !important;
+box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.hidden {
+display: none !important;
+}
+
+/* =========================================================
+APP
+========================================================= */
+
+.app {
+min-height: 100vh;
+}
+
+/* =========================================================
+SIDEBAR
+========================================================= */
+
+.sidebar {
+position: fixed;
+left: 0;
+top: 0;
+bottom: 0;
+width: var(--sidebar-width);
+background: var(--dark);
+color: white;
+padding: 20px 14px;
+z-index: 1000;
+overflow-y: auto;
+}
+
+.brand {
+display: flex;
+align-items: center;
+gap: 12px;
+padding: 5px 8px 25px;
+border-bottom: 1px solid rgba(255,255,255,0.1);
+margin-bottom: 20px;
+}
+
+.brand-logo {
+width: 45px;
+height: 45px;
+border-radius: 12px;
+background: var(--primary);
+display: flex;
+align-items: center;
+justify-content: center;
+font-weight: bold;
+font-size: 16px;
+}
+
+.brand h2 {
+font-size: 18px;
+margin-bottom: 4px;
+}
+
+.brand span {
+color: #9ca3af;
+font-size: 11px;
+}
+
+.navigation {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+.nav-item {
+width: 100%;
+border: none;
+background: transparent;
+color: #d1d5db;
+padding: 12px 14px;
+border-radius: 8px;
+text-align: left;
+font-size: 14px;
+transition: 0.2s;
+}
+
+.nav-item:hover {
+background: rgba(255,255,255,0.08);
+color: white;
+}
+
+.nav-item.active {
+background: var(--primary);
+color: white;
+box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+}
+
+/* =========================================================
+MAIN
+========================================================= */
+
+.main {
+margin-left: var(--sidebar-width);
+padding: 25px;
+min-height: 100vh;
+}
+
+/* =========================================================
+TOPBAR
+========================================================= */
+
+.topbar {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 25px;
+}
+
+.topbar h1 {
+font-size: 26px;
+margin-bottom: 5px;
+}
+
+.topbar p {
+color: var(--muted);
+font-size: 14px;
+}
+
+.topbar-right {
+background: white;
+padding: 10px 15px;
+border-radius: 8px;
+border: 1px solid var(--border);
+font-size: 13px;
+color: var(--muted);
+}
+
+/* =========================================================
+PAGE
+========================================================= */
+
+.page {
+display: none;
+animation: fadeIn 0.2s ease;
+}
+
+.page.active {
+display: block;
+}
+
+@keyframes fadeIn {
+from {
+opacity: 0;
+transform: translateY(5px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+/* =========================================================
+STATS
+========================================================= */
+
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 16px;
+margin-bottom: 22px;
+}
+
+.stat-card {
+background: white;
+border-radius: 12px;
+padding: 18px;
+display: flex;
+align-items: center;
+gap: 15px;
+border: 1px solid var(--border);
+box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+}
+
+.stat-card span {
+display: block;
+color: var(--muted);
+font-size: 12px;
+margin-bottom: 6px;
+}
+
+.stat-card strong {
+font-size: 22px;
+color: var(--text);
+}
+
+.stat-icon {
+width: 45px;
+height: 45px;
+border-radius: 10px;
+display: flex;
+align-items: center;
+justify-content: center;
+font-size: 20px;
+}
+
+.stat-icon.blue {
+background: #dbeafe;
+}
+
+.stat-icon.green {
+background: #dcfce7;
+}
+
+.stat-icon.yellow {
+background: #fef3c7;
+}
+
+.stat-icon.red {
+background: #fee2e2;
+}
+
+.stat-icon.purple {
+background: #ede9fe;
+}
+
+.stat-icon.orange {
+background: #ffedd5;
+}
+
+.stat-icon.cyan {
+background: #cffafe;
+}
+
+.stat-icon.dark {
+background: #e5e7eb;
+}
+
+/* =========================================================
+CARD
+========================================================= */
+
+.card {
+background: white;
+border-radius: 12px;
+border: 1px solid var(--border);
+box-shadow: 0 3px 12px rgba(0,0,0,0.04);
+padding: 22px;
+margin-bottom: 20px;
+}
+
+.card-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 15px;
+margin-bottom: 20px;
+}
+
+.card-header h2 {
+font-size: 19px;
+margin-bottom: 5px;
+}
+
+.card-header p {
+color: var(--muted);
+font-size: 13px;
+}
+
+/* =========================================================
+BUTTONS
+========================================================= */
+
+.primary-btn,
+.secondary-btn,
+.warning-btn,
+.danger-btn,
+.icon-btn {
+border: none;
+border-radius: 7px;
+padding: 9px 14px;
+font-size: 13px;
+transition: 0.2s;
+}
+
+.primary-btn {
+background: var(--primary);
+color: white;
+}
+
+.primary-btn:hover {
+background: var(--primary-dark);
+}
+
+.secondary-btn {
+background: #6b7280;
+color: white;
+}
+
+.secondary-btn:hover {
+background: #4b5563;
+}
+
+.warning-btn {
+background: var(--warning);
+color: white;
+}
+
+.warning-btn:hover {
+background: #d97706;
+}
+
+.danger-btn {
+background: var(--danger);
+color: white;
+}
+
+.danger-btn:hover {
+background: #b91c1c;
+}
+
+.icon-btn {
+width: 40px;
+height: 38px;
+padding: 0;
+background: var(--primary);
+color: white;
+font-size: 16px;
+}
+
+.button-group {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+/* =========================================================
+TOOLBAR
+========================================================= */
+
+.toolbar {
+display: flex;
+gap: 10px;
+flex-wrap: wrap;
+align-items: center;
+}
+
+.toolbar input,
+.toolbar select {
+height: 38px;
+padding: 0 11px;
+border: 1px solid var(--border);
+border-radius: 7px;
+background: white;
+color: var(--text);
+}
+
+/* =========================================================
+TABLE
+========================================================= */
+
+.table-container {
+width: 100%;
+overflow-x: auto;
+}
+
+table {
+width: 100%;
+border-collapse: collapse;
+min-width: 850px;
+}
+
+th,
+td {
+padding: 12px;
+border-bottom: 1px solid var(--border);
+text-align: left;
+font-size: 13px;
+white-space: nowrap;
+}
+
+th {
+background: #f9fafb;
+color: #4b5563;
+font-size: 12px;
+font-weight: 600;
+}
+
+tbody tr:hover {
+background: #f9fafb;
+}
+
+.empty {
+text-align: center;
+color: var(--muted);
+padding: 35px !important;
+}
+
+/* =========================================================
+EMPLOYEE SEARCH
+========================================================= */
+
+#employeeSearch {
+width: 280px;
+height: 38px;
+padding: 0 12px;
+border: 1px solid var(--border);
+border-radius: 7px;
+}
+
+.employee-action {
+display: flex;
+gap: 6px;
+}
+
+/* =========================================================
+CALENDAR
+========================================================= */
+
+.calendar-toolbar {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 20px;
+margin-bottom: 20px;
+}
+
+.calendar-toolbar h2 {
+min-width: 180px;
+text-align: center;
+font-size: 20px;
+}
+
+.attendance-legend {
+display: flex;
+justify-content: center;
+gap: 15px;
+flex-wrap: wrap;
+padding: 12px;
+background: #f9fafb;
+border-radius: 8px;
+margin-bottom: 20px;
+font-size: 12px;
+}
+
+.weekdays,
+.attendance-calendar {
+display: grid;
+grid-template-columns: repeat(7, 1fr);
+gap: 6px;
+}
+
+.weekdays div {
+text-align: center;
+padding: 10px;
+font-weight: bold;
+color: var(--muted);
+font-size: 12px;
+}
+
+.calendar-day {
+min-height: 95px;
+border: 1px solid var(--border);
+border-radius: 8px;
+padding: 8px;
+cursor: pointer;
+background: white;
+transition: 0.2s;
+position: relative;
+}
+
+.calendar-day:hover {
+border-color: var(--primary);
+transform: translateY(-2px);
+}
+
+.calendar-day.today {
+box-shadow: 0 0 0 2px var(--primary);
+}
+
+.calendar-day.selected {
+box-shadow: 0 0 0 3px #111827;
+}
+
+.calendar-day.empty-day {
+background: transparent;
+border: none;
+cursor: default;
+}
+
+.day-number {
+font-weight: bold;
+font-size: 14px;
+}
+
+.day-status {
+margin-top: 10px;
+font-size: 10px;
+font-weight: bold;
+}
+
+.calendar-full {
+background: #f0fdf4;
+border-color: #86efac;
+}
+
+.calendar-half {
+background: #fffbeb;
+border-color: #fcd34d;
+}
+
+.calendar-absent {
+background: #fef2f2;
+border-color: #fca5a5;
+}
+
+.calendar-paid {
+background: #eff6ff;
+border-color: #93c5fd;
+}
+
+.calendar-unpaid {
+background: #f9fafb;
+}
+
+.calendar-holiday {
+background: #faf5ff;
+border-color: #c4b5fd;
+}
+
+.calendar-weekoff {
+background: #f3f4f6;
+}
+
+/* =========================================================
+STATUS BADGES
+========================================================= */
+
+.status-badge {
+display: inline-block;
+padding: 5px 9px;
+border-radius: 20px;
+font-size: 10px;
+font-weight: bold;
+}
+
+.status-full {
+background: #dcfce7;
+color: #166534;
+}
+
+.status-half {
+background: #fef3c7;
+color: #92400e;
+}
+
+.status-absent {
+background: #fee2e2;
+color: #991b1b;
+}
+
+.status-paid {
+background: #dbeafe;
+color: #1e40af;
+}
+
+.status-unpaid {
+background: #e5e7eb;
+color: #374151;
+}
+
+.status-holiday {
+background: #ede9fe;
+color: #6d28d9;
+}
+
+.status-weekoff {
+background: #d1d5db;
+color: #374151;
+}
+
+.status-active {
+background: #dcfce7;
+color: #166534;
+}
+
+.status-inactive {
+background: #fee2e2;
+color: #991b1b;
+}
+
+.status-late {
+background: #ffedd5;
+color: #9a3412;
+}
+
+/* =========================================================
+PAYROLL
+========================================================= */
+
+.payroll-summary {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 15px;
+margin-bottom: 20px;
+}
+
+.payroll-summary > div {
+background: #f9fafb;
+padding: 18px;
+border-radius: 9px;
+border: 1px solid var(--border);
+}
+
+.payroll-summary span {
+display: block;
+font-size: 12px;
+color: var(--muted);
+margin-bottom: 7px;
+}
+
+.payroll-summary strong {
+font-size: 20px;
+}
+
+.salary-input {
+width: 90px;
+padding: 7px;
+border: 1px solid var(--border);
+border-radius: 6px;
+}
+
+/* =========================================================
+SALARY SLIP
+========================================================= */
+
+.salary-slip {
+max-width: 850px;
+margin: 20px auto;
+border: 1px solid #d1d5db;
+padding: 35px;
+background: white;
+}
+
+.salary-slip-header {
+text-align: center;
+border-bottom: 2px solid #111827;
+padding-bottom: 20px;
+margin-bottom: 25px;
+}
+
+.salary-slip-header h1 {
+font-size: 24px;
+margin-bottom: 7px;
+}
+
+.salary-slip-header p {
+color: var(--muted);
+}
+
+.slip-employee {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 15px;
+margin-bottom: 25px;
+}
+
+.slip-employee div {
+display: flex;
+justify-content: space-between;
+border-bottom: 1px solid var(--border);
+padding: 8px 0;
+}
+
+.slip-employee strong {
+color: var(--muted);
+}
+
+.slip-table {
+min-width: 0;
+}
+
+.slip-table td {
+white-space: normal;
+}
+
+.slip-table td:last-child {
+text-align: right;
+font-weight: bold;
+}
+
+.slip-table .net-row {
+background: #f3f4f6;
+font-size: 16px;
+}
+
+.slip-footer {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-top: 40px;
+}
+
+.slip-footer p {
+border-top: 1px solid #111827;
+padding-top: 8px;
+}
+
+/* =========================================================
+SETTINGS
+========================================================= */
+
+.settings-form {
+max-width: 650px;
+}
+
+.form-group {
+display: flex;
+flex-direction: column;
+gap: 7px;
+margin-bottom: 15px;
+}
+
+.form-group label {
+font-size: 13px;
+font-weight: 600;
+color: #374151;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+width: 100%;
+padding: 10px 11px;
+border: 1px solid var(--border);
+border-radius: 7px;
+background: white;
+}
+
+.form-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 15px;
+}
+
+/* =========================================================
+BACKUP
+========================================================= */
+
+.backup-actions {
+display: flex;
+gap: 12px;
+flex-wrap: wrap;
+margin: 20px 0;
+}
+
+.file-btn {
+display: inline-flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+}
+
+.backup-info {
+background: #eff6ff;
+color: #1e40af;
+padding: 15px;
+border-radius: 8px;
+font-size: 13px;
+}
+
+/* =========================================================
+MODAL
+========================================================= */
+
+.modal {
+position: fixed;
+inset: 0;
+background: rgba(0,0,0,0.6);
+display: none;
+align-items: center;
+justify-content: center;
+padding: 20px;
+z-index: 5000;
+}
+
+.modal.show {
+display: flex;
+}
+
+.modal-box {
+width: 100%;
+max-width: 600px;
+max-height: 90vh;
+overflow-y: auto;
+background: white;
+border-radius: 12px;
+padding: 25px;
+box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 20px;
+}
+
+.modal-header h2 {
+font-size: 20px;
+}
+
+.close-modal {
+border: none;
+background: transparent;
+font-size: 28px;
+color: #6b7280;
+cursor: pointer;
+}
+
+.close-modal:hover {
+color: #111827;
+}
+
+.modal-actions {
+display: flex;
+justify-content: flex-end;
+gap: 10px;
+margin-top: 20px;
+}
+
+/* =========================================================
+TEXTAREA
+========================================================= */
+
+textarea {
+resize: vertical;
+}
+
+/* =========================================================
+RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+.stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.payroll-summary {
+    grid-template-columns: 1fr;
+}
+
+}
+
+/* =========================================================
+RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+:root {
+    --sidebar-width: 0px;
+}
+
+.sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+    padding: 12px;
+}
+
+.brand {
+    padding-bottom: 15px;
+    margin-bottom: 12px;
+}
+
+.navigation {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.nav-item {
+    font-size: 12px;
+    padding: 10px;
+}
+
+.main {
+    margin-left: 0;
+    padding: 15px;
+}
+
+.topbar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.topbar h1 {
+    font-size: 22px;
+}
+
+.topbar-right {
+    width: 100%;
+}
+
+.stats-grid {
+    grid-template-columns: 1fr;
+}
+
+.card {
+    padding: 15px;
+}
+
+.card-header {
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.toolbar {
+    width: 100%;
+}
+
+.toolbar input,
+.toolbar select,
+#employeeSearch {
+    width: 100%;
+}
+
+.calendar-toolbar {
+    gap: 10px;
+}
+
+.calendar-toolbar h2 {
+    font-size: 16px;
+    min-width: 140px;
+}
+
+.attendance-legend {
+    justify-content: flex-start;
+}
+
+.weekdays,
+.attendance-calendar {
+    gap: 3px;
+}
+
+.weekdays div {
+    font-size: 10px;
+    padding: 7px 2px;
+}
+
+.calendar-day {
+    min-height: 65px;
+    padding: 5px;
+}
+
+.day-number {
+    font-size: 11px;
+}
+
+.day-status {
+    font-size: 8px;
+    margin-top: 5px;
+}
+
+.form-grid {
+    grid-template-columns: 1fr;
+}
+
+.slip-employee {
+    grid-template-columns: 1fr;
+}
+
+.salary-slip {
+    padding: 20px;
+}
+
+.salary-slip-header h1 {
+    font-size: 18px;
+}
+
+.slip-footer {
+    flex-direction: column;
+    gap: 25px;
+    align-items: flex-start;
+}
+
+}
+
+/* =========================================================
+SMALL MOBILE
+========================================================= */
+
+@media (max-width: 450px) {
+
+.navigation {
+    grid-template-columns: 1fr 1fr;
+}
+
+.nav-item {
+    font-size: 11px;
+}
+
+.stat-card {
+    padding: 14px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 17px;
+}
+
+.stat-card strong {
+    font-size: 19px;
+}
+
+.calendar-day {
+    min-height: 52px;
+}
+
+}
+
+/* =========================================================
+PRINT SALARY SLIP
+========================================================= */
+
+@media print {
+
+body {
+    background: white;
+}
+
+.sidebar,
+.topbar,
+.print-hide,
+.card-header,
+.toolbar {
+    display: none !important;
+}
+
+.main {
+    margin: 0;
+    padding: 0;
+}
+
+.page {
+    display: none !important;
+}
+
+#salarySlipPage {
+    display: block !important;
+}
+
+.card {
+    border: none;
+    box-shadow: none;
+    padding: 0;
+}
+
+.salary-slip {
+    display: block !important;
+    max-width: 100%;
+    border: 1px solid #000;
+    margin: 0;
+}
+
+}
