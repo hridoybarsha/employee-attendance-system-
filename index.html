@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Pro - Attendance & Payroll</title>
+
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Firebase Compat SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* ================= RESET & BASIC ================= */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f7fb;
+            color: #1f2937;
+            padding-bottom: 65px; /* Space for Mobile Bottom Nav */
+        }
+
+        @media (min-width: 769px) {
+            body {
+                padding-bottom: 0;
+            }
+        }
+
+        button, input, select, textarea {
+            font-family: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        /* ================= TOP BLUE HEADER ================= */
+        .topbar {
+            height: 60px;
+            background: #2563eb; /* Blue Header */
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            position: sticky;
+            top: 0;
+            z-index: 30;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .hamburger-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (min-width: 769px) {
+            .hamburger-btn {
+                display: none;
+            }
+        }
+
+        .topbar h2 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .topbar p {
+            color: #dbeafe;
+            font-size: 11px;
+        }
+
+        .firebase-status {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .firebase-status.connecting { background: #fef3c7; color: #92400e; }
+        .firebase-status.connected { background: #dcfce7; color: #166534; }
+        .firebase-status.error { background: #fee2e2; color: #991b1b; }
+
+        /* ================= APP LAYOUT ================= */
+        .app {
+            display: flex;
+            min-height: calc(100vh - 60px);
+            position: relative;
+        }
+
+        /* OVERLAY FOR MOBILE SIDEBAR */
+        .sidebar-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 40;
+            display: none;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 250px;
+            background: #111827;
+            color: white;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            z-index: 50;
+            overflow-y: auto;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        @media (min-width: 769px) {
+            .sidebar {
+                position: static;
+                transform: translateX(0);
+                z-index: 10;
+            }
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            border-bottom: 1px solid #374151;
+        }
+
+        .logo-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo span { font-size: 24px; }
+        .logo strong { display: block; font-size: 16px; }
+        .logo small { color: #9ca3af; font-size: 11px; }
+
+        .close-sidebar-btn {
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            font-size: 20px;
+        }
+
+        @media (min-width: 769px) {
+            .close-sidebar-btn { display: none; }
+        }
+
+        nav { padding: 15px 10px; }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 4px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #d1d5db;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: #2563eb;
+            color: white;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            flex: 1;
+            width: 100%;
+            padding: 16px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* PAGE VISIBILITY */
+        .page { display: none; }
+        .page.active { display: block; }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 { font-size: 22px; color: #111827; }
+        .page-header p { color: #6b7280; font-size: 13px; margin-top: 2px; }
+
+        /* BUTTONS */
+        .primary-btn, .secondary-btn, .success-btn, .danger-btn {
+            border: 0;
+            border-radius: 7px;
+            padding: 10px 16px;
+            font-weight: 600;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .primary-btn { background: #2563eb; color: white; }
+        .primary-btn:hover { background: #1d4ed8; }
+        .secondary-btn { background: #e5e7eb; color: #374151; }
+        .success-btn { background: #16a34a; color: white; }
+        .danger-btn { background: #dc2626; color: white; }
+
+        /* STATS CARDS */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 14px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-icon { font-size: 24px; }
+        .stat-card span { display: block; color: #6b7280; font-size: 12px; }
+        .stat-card strong { display: block; margin-top: 2px; font-size: 18px; color: #111827; }
+
+        /* CARDS & TABLES */
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            background: #fafafa;
+        }
+
+        .card-header h2 { font-size: 16px; color: #374151; }
+
+        .table-wrap { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+            white-space: nowrap;
+        }
+        th { background: #f9fafb; color: #4b5563; font-size: 12px; font-weight: 600; }
+        td { font-size: 13px; }
+
+        /* CONTROLS & FILTERS */
+        .toolbar, .payroll-controls, .slip-controls, .report-controls, .attendance-controls {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: white;
+            padding: 14px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .input-group label {
+            font-size: 11px;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+        }
+
+        input[type="text"], input[type="search"], input[type="month"], input[type="date"], input[type="time"], input[type="number"], input[type="tel"], select, textarea {
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: #f9fafb;
+            font-size: 13px;
+            width: 100%;
+        }
+
+        /* LEGENDS */
+        .legend {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 12px 14px;
+            background: white;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 16px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* CALENDAR */
+        .calendar-card {
+            background: white;
+            padding: 16px;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .calendar-header h2 { font-size: 16px; font-weight: 700; color: #1f2937; }
+
+        .calendar-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            font-weight: 700;
+            color: #6b7280;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+
+        .calendar-day {
+            min-height: 60px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            padding: 4px;
+            cursor: pointer;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .calendar-day:hover { background: #f3f4f6; }
+        .calendar-day.empty { background: #f9fafb; border-color: transparent; cursor: default; }
+
+        .calendar-day .day-number { font-weight: 700; font-size: 12px; color: #374151; }
+        .calendar-day .day-status { font-size: 10px; font-weight: 600; margin-top: 2px; }
+
+        .calendar-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 16px;
+            flex-wrap: wrap;
+        }
+
+        /* MOBILE BOTTOM NAVIGATION */
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            z-index: 30;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        @media (min-width: 769px) {
+            .mobile-nav { display: none; }
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+            background: transparent;
+            border: none;
+            color: #6b7280;
+            font-size: 10px;
+            font-weight: 600;
+            width: 20%;
+        }
+
+        .mobile-nav-item i { font-size: 16px; }
+        .mobile-nav-item.active { color: #2563eb; }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        .modal.show { display: flex; }
+
+        .modal-box {
+            background: white;
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .close-btn { border: 0; background: none; font-size: 24px; color: #6b7280; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 16px; }
+
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 4px; font-size: 12px; font-weight: 700; }
+
+        /* UTILITIES */
+        .hidden { display: none !important; }
+        .action-btn { border: 0; padding: 5px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+        .edit-btn { background: #dbeafe; color: #1d4ed8; }
+        .delete-btn { background: #fee2e2; color: #b91c1c; }
+
+        /* PRINT STYLES */
+        @media print {
+            body * { visibility: hidden; }
+            .salary-slip, .salary-slip * { visibility: visible; }
+            .salary-slip { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+            .print-btn { display: none; }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 🔵 TOP BLUE HEADER -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="hamburger-btn" id="hamburgerBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div>
+                <h2 id="pageTitle">Dashboard</h2>
+                <p id="currentDate"></p>
+            </div>
+        </div>
+        <div id="firebaseStatus" class="firebase-status connecting">
+            🟡 Connecting...
+        </div>
+    </header>
+
+    <div class="app">
+
+        <!-- OVERLAY FOR MOBILE SIDEBAR -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- 🏠 SIDEBAR NAVIGATION -->
+        <aside class="sidebar" id="sidebar">
+            <div class="logo">
+                <div class="logo-content">
+                    <span>👥</span>
+                    <div>
+                        <strong>Employee Pro</strong>
+                        <small>Management System</small>
+                    </div>
+                </div>
+                <button class="close-sidebar-btn" id="closeSidebarBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <nav>
+                <button class="nav-item active" data-page="dashboard">
+                    <i class="fas fa-home w-5"></i> Dashboard
+                </button>
+                <button class="nav-item" data-page="employees">
+                    <i class="fas fa-users w-5"></i> Employees
+                </button>
+                <button class="nav-item" data-page="attendance">
+                    <i class="fas fa-calendar-check w-5"></i> Attendance
+                </button>
+                <button class="nav-item" data-page="leave">
+                    <i class="fas fa-plane-departure w-5"></i> Leave
+                </button>
+                <button class="nav-item" data-page="payroll">
+                    <i class="fas fa-wallet w-5"></i> Payroll
+                </button>
+                <button class="nav-item" data-page="salarySlip">
+                    <i class="fas fa-file-invoice-dollar w-5"></i> Salary Slip
+                </button>
+                <button class="nav-item" data-page="reports">
+                    <i class="fas fa-chart-bar w-5"></i> Reports
+                </button>
+                <button class="nav-item" data-page="settings">
+                    <i class="fas fa-cog w-5"></i> Settings
+                </button>
+                <button class="nav-item" data-page="backup">
+                    <i class="fas fa-database w-5"></i> Backup
+                </button>
+            </nav>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main">
+
+            <!-- ================= DASHBOARD ================= -->
+            <section class="page active" id="dashboardPage">
+                <div class="page-header">
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>Employee Attendance & Payroll Management System</p>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-icon">👥</div><div><span>Total Employees</span><strong id="totalEmployees">0</strong></div></div>
+                    <div class="stat-card"><div class="stat-icon">🟢</div><div><span>Present Today</span><strong id="presentToday">0</strong></div></div>
+                    <div class="stat-card"><div class="stat-icon">🟡</div><div><span>Half Day Today</span><strong id="halfDayToday">0</strong></div></div>
+                    <div class="stat-card"><div class="stat-icon">🔴</div><div><span>Absent Today</span><strong id="absentToday">0</strong></div></div>
+                    <div class="stat-card"><div class="stat-icon">📝</div><div><span>Leave Today</span><strong id="leaveToday">0</strong></div></div>
+                    <div class="stat-card"><div class="stat-icon">⏰</div><div><span>Late Today</span><strong id="lateToday">0</strong></div></div>
+                    <div class="stat-card"><div class="stat-icon">🕐</div><div><span>Overtime Today</span><strong id="overtimeToday">0</strong></div></div>
+                    <div class="stat-card"><div class="stat-icon">💰</div><div><span>Monthly Payroll</span><strong id="monthlyPayroll">₹0</strong></div></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><h2>Today's Attendance</h2></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>ID</th><th>Employee</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th></tr>
+                            </thead>
+                            <tbody id="dashboardAttendance"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= EMPLOYEES ================= -->
+            <section class="page" id="employeesPage">
+                <div class="page-header">
+                    <div><h1>Employee Management</h1><p>Manage employees and salary information</p></div>
+                    <button class="primary-btn" id="addEmployeeBtn">➕ Add Employee</button>
+                </div>
+
+                <div class="toolbar">
+                    <input type="search" id="employeeSearch" placeholder="Search employee...">
+                    <select id="employeeDepartmentFilter"><option value="">All Departments</option></select>
+                </div>
+
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>ID</th><th>Employee</th><th>Phone</th><th>Department</th><th>Designation</th><th>Salary</th><th>Joining Date</th><th>Status</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="employeeTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= ATTENDANCE ================= -->
+            <section class="page" id="attendancePage">
+                <div class="page-header">
+                    <div><h1>Attendance</h1><p>Employee ID based attendance management</p></div>
+                </div>
+
+                <!-- 👤 Employee Select -->
+                <div class="attendance-controls">
+                    <div class="input-group">
+                        <label>Employee Select</label>
+                        <select id="attendanceEmployeeSelect">
+                            <option value="">Select Employee</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Status Legends -->
+                <div class="legend">
+                    <span>🟢 Full Day</span>
+                    <span>🟡 Half Day</span>
+                    <span>🔴 Absent</span>
+                    <span>🔵 Paid Leave</span>
+                    <span>🟣 Unpaid Leave</span>
+                    <span>🟠 Holiday</span>
+                    <span>⚫ Weekly Off</span>
+                    <span>⚪ Not Set</span>
+                </div>
+
+                <!-- 📅 Monthly Attendance Calendar -->
+                <div class="calendar-card">
+                    <div class="calendar-header">
+                        <button class="secondary-btn" id="previousMonth">◀ Prev</button>
+                        <h2 id="calendarTitle"></h2>
+                        <button class="secondary-btn" id="nextMonth">Next ▶</button>
+                    </div>
+
+                    <div class="calendar-weekdays">
+                        <span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span>
+                    </div>
+
+                    <div class="calendar" id="attendanceCalendar"></div>
+
+                    <div class="calendar-actions">
+                        <button class="success-btn" id="markAllPresentBtn">🟢 Mark All Full Day</button>
+                    </div>
+                </div>
+
+                <!-- Attendance Details Table -->
+                <div class="card hidden" id="attendanceDetails">
+                    <div class="card-header"><h2 id="selectedDateTitle">Attendance Details</h2></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>ID</th><th>Employee</th><th>Check In</th><th>Check Out</th><th>Hours</th><th>Status</th><th>Late</th><th>Overtime</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="attendanceTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 📊 Attendance Summary -->
+                <div class="card">
+                    <div class="card-header"><h2>Attendance Summary</h2></div>
+                    <div style="padding: 16px;">
+                        <div class="stats-grid" id="attendanceSummaryGrid">
+                            <div class="stat-card"><div><span>Full Day</span><strong id="summaryFullDay" class="text-green-600">0</strong></div></div>
+                            <div class="stat-card"><div><span>Half Day</span><strong id="summaryHalfDay">0</strong></div></div>
+                            <div class="stat-card"><div><span>Absent</span><strong id="summaryAbsent">0</strong></div></div>
+                            <div class="stat-card"><div><span>Paid Leave</span><strong id="summaryPaidLeave">0</strong></div></div>
+                            <div class="stat-card"><div><span>Unpaid Leave</span><strong id="summaryUnpaidLeave">0</strong></div></div>
+                            <div class="stat-card"><div><span>Holiday</span><strong id="summaryHoliday">0</strong></div></div>
+                            <div class="stat-card"><div><span>Weekly Off</span><strong id="summaryWeeklyOff">0</strong></div></div>
+                            <div class="stat-card"><div><span>Not Set</span><strong id="summaryNotSet">0</strong></div></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= LEAVE ================= -->
+            <section class="page" id="leavePage">
+                <div class="page-header">
+                    <div><h1>Leave Management</h1><p>Manage employee leave applications</p></div>
+                    <button class="primary-btn" id="addLeaveBtn">➕ Add Leave</button>
+                </div>
+
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Employee</th><th>Leave Type</th><th>From</th><th>To</th><th>Days</th><th>Reason</th><th>Status</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="leaveTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= PAYROLL ================= -->
+            <section class="page" id="payrollPage">
+                <div class="page-header">
+                    <div><h1>Monthly Payroll</h1><p>Calculate employee salary based on attendance</p></div>
+                </div>
+
+                <div class="payroll-controls">
+                    <input type="month" id="payrollMonth">
+                    <button class="primary-btn" id="calculatePayrollBtn">🧮 Calculate Payroll</button>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><div><span>Total Payroll</span><strong id="totalPayroll">₹0</strong></div></div>
+                    <div class="stat-card"><div><span>Total Employees</span><strong id="payrollEmployees">0</strong></div></div>
+                    <div class="stat-card"><div><span>Total Overtime</span><strong id="totalOvertimeHours">0 Hrs</strong></div></div>
+                </div>
+
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr><th>Employee</th><th>Basic Salary</th><th>Full Day</th><th>Half Day</th><th>Paid Leave</th><th>Absent</th><th>Overtime</th><th>Bonus</th><th>Advance</th><th>Deduction</th><th>Net Salary</th><th>Action</th></tr>
+                            </thead>
+                            <tbody id="payrollTable"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SALARY SLIP ================= -->
+            <section class="page" id="salarySlipPage">
+                <div class="page-header">
+                    <div><h1>Salary Slip</h1><p>Generate employee salary slip</p></div>
+                </div>
+
+                <div class="slip-controls">
+                    <select id="salaryEmployeeSelect"><option value="">Select Employee</option></select>
+                    <input type="month" id="salarySlipMonth">
+                    <button class="primary-btn" id="generateSalarySlipBtn">🧾 Generate Slip</button>
+                </div>
+
+                <div class="salary-slip card hidden" id="salarySlipContainer" style="padding: 24px; max-width: 700px; margin: auto;">
+                    <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #111827; padding-bottom: 12px; margin-bottom: 16px;">
+                        <div><h1>EMPLOYEE PRO</h1><p>Salary Slip</p></div>
+                        <div><strong id="slipMonth"></strong></div>
+                    </div>
+                    <div style="margin-bottom: 16px;">
+                        <p><strong>Name:</strong> <span id="slipEmployeeName"></span></p>
+                        <p><strong>Employee ID:</strong> <span id="slipEmployeeId"></span></p>
+                        <p><strong>Department:</strong> <span id="slipDepartment"></span></p>
+                    </div>
+                    <table>
+                        <tbody>
+                            <tr><td>Full Day</td><td id="slipFullDay">0</td></tr>
+                            <tr><td>Half Day</td><td id="slipHalfDay">0</td></tr>
+                            <tr><td>Paid Leave</td><td id="slipPaidLeave">0</td></tr>
+                            <tr><td>Absent</td><td id="slipAbsent">0</td></tr>
+                            <tr><td>Overtime</td><td id="slipOvertime">0 Hrs</td></tr>
+                            <tr><td>Earned Basic Salary</td><td id="slipBasicSalary">₹0</td></tr>
+                            <tr><td>Bonus</td><td id="slipBonus">₹0</td></tr>
+                            <tr><td>Advance</td><td id="slipAdvance">₹0</td></tr>
+                            <tr><td>Deduction</td><td id="slipDeduction">₹0</td></tr>
+                            <tr style="font-weight: bold; font-size: 16px;"><td>NET SALARY</td><td id="slipNetSalary">₹0</td></tr>
+                        </tbody>
+                    </table>
+                    <button class="primary-btn print-btn" id="printSalarySlipBtn" style="margin-top: 16px;">🖨️ Print Salary Slip</button>
+                </div>
+            </section>
+
+            <!-- ================= REPORTS ================= -->
+            <section class="page" id="reportsPage">
+                <div class="page-header">
+                    <div><h1>Reports</h1><p>Generate employee reports</p></div>
+                </div>
+
+                <div class="report-controls">
+                    <select id="reportType">
+                        <option value="attendance">Attendance Report</option>
+                        <option value="late">Late Report</option>
+                        <option value="overtime">Overtime Report</option>
+                        <option value="salary">Salary Report</option>
+                    </select>
+                    <input type="month" id="reportMonth">
+                    <button class="primary-btn" id="generateReportBtn">📊 Generate Report</button>
+                    <button class="secondary-btn" id="exportReportBtn">📥 Export CSV</button>
+                </div>
+
+                <div class="card">
+                    <div class="table-wrap">
+                        <table>
+                            <thead id="reportHead"></thead>
+                            <tbody id="reportBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ================= SETTINGS ================= -->
+            <section class="page" id="settingsPage">
+                <div class="page-header">
+                    <div><h1>Settings</h1><p>Configure employee and office settings</p></div>
+                </div>
+
+                <div class="card" style="padding: 16px;">
+                    <form id="settingsForm">
+                        <div class="form-grid">
+                            <div class="form-group"><label>Office Start Time</label><input type="time" id="officeStartTime" required></div>
+                            <div class="form-group"><label>Office End Time</label><input type="time" id="officeEndTime" required></div>
+                            <div class="form-group"><label>Grace Period Minutes</label><input type="number" id="gracePeriod" min="0"></div>
+                            <div class="form-group">
+                                <label>Weekly Off</label>
+                                <select id="weeklyOff">
+                                    <option value="0">Sunday</option>
+                                    <option value="1">Monday</option>
+                                    <option value="2">Tuesday</option>
+                                    <option value="3">Wednesday</option>
+                                    <option value="4">Thursday</option>
+                                    <option value="5">Friday</option>
+                                    <option value="6">Saturday</option>
+                                </select>
+                            </div>
+                            <div class="form-group"><label>Overtime Rate Per Hour ₹</label><input type="number" id="overtimeRate" min="0"></div>
+                        </div>
+                        <button class="primary-btn" type="submit">💾 Save Settings</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ================= BACKUP ================= -->
+            <section class="page" id="backupPage">
+                <div class="page-header">
+                    <div><h1>Backup & Restore</h1><p>Backup or restore your employee data</p></div>
+                </div>
+                <div class="card" style="padding: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="primary-btn" id="exportBackupBtn">📤 Export Backup</button>
+                    <label class="secondary-btn" style="cursor: pointer;">
+                        📥 Import Backup
+                        <input type="file" id="importBackupInput" accept=".json" hidden>
+                    </label>
+                    <button class="danger-btn" id="resetDataBtn">🗑️ Reset All Data</button>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- 📱 MOBILE BOTTOM NAVIGATION -->
+    <nav class="mobile-nav">
+        <button class="mobile-nav-item active" data-page="dashboard">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+        </button>
+        <button class="mobile-nav-item" data-page="employees">
+            <i class="fas fa-users"></i>
+            <span>Employees</span>
+        </button>
+        <button class="mobile-nav-item" data-page="attendance">
+            <i class="fas fa-calendar-check"></i>
+            <span>Attendance</span>
+        </button>
+        <button class="mobile-nav-item" data-page="leave">
+            <i class="fas fa-plane-departure"></i>
+            <span>Leave</span>
+        </button>
+        <button class="mobile-nav-item" data-page="payroll">
+            <i class="fas fa-wallet"></i>
+            <span>Payroll</span>
+        </button>
+    </nav>
+
+    <!-- MODALS -->
+    <!-- EMPLOYEE MODAL -->
+    <div class="modal" id="employeeModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2 id="employeeModalTitle">Add Employee</h2>
+                <button class="close-btn" id="closeEmployeeModal">×</button>
+            </div>
+            <form id="employeeForm">
+                <input type="hidden" id="editEmployeeId">
+                <div class="form-grid">
+                    <div class="form-group"><label>Employee ID *</label><input type="text" id="employeeId" required></div>
+                    <div class="form-group"><label>Employee Name *</label><input type="text" id="employeeName" required></div>
+                    <div class="form-group"><label>Phone</label><input type="tel" id="employeePhone"></div>
+                    <div class="form-group"><label>Department</label><input type="text" id="employeeDepartment"></div>
+                    <div class="form-group"><label>Designation</label><input type="text" id="employeeDesignation"></div>
+                    <div class="form-group"><label>Monthly Salary *</label><input type="number" id="employeeSalary" min="0" required></div>
+                    <div class="form-group"><label>Joining Date *</label><input type="date" id="employeeJoinDate" required></div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="employeeStatus">
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" id="cancelEmployeeBtn">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Employee</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ATTENDANCE MODAL -->
+    <div class="modal" id="attendanceModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Update Attendance</h2>
+                <button class="close-btn" id="closeAttendanceModal">×</button>
+            </div>
+            <form id="attendanceForm">
+                <input type="hidden" id="attendanceEmployeeId">
+                <input type="hidden" id="attendanceDate">
+                <div class="form-group"><label>Employee</label><input type="text" id="attendanceEmployeeName" readonly></div>
+                <div class="form-grid">
+                    <div class="form-group"><label>Check In</label><input type="time" id="checkInTime"></div>
+                    <div class="form-group"><label>Check Out</label><input type="time" id="checkOutTime"></div>
+                </div>
+                <div class="form-group">
+                    <label>Status</label>
+                    <select id="attendanceStatus">
+                        <option value="Full Day">🟢 Full Day</option>
+                        <option value="Half Day">🟡 Half Day</option>
+                        <option value="Absent">🔴 Absent</option>
+                        <option value="Paid Leave">🔵 Paid Leave</option>
+                        <option value="Unpaid Leave">🟣 Unpaid Leave</option>
+                        <option value="Holiday">🟠 Holiday</option>
+                        <option value="Weekly Off">⚫ Weekly Off</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" id="cancelAttendanceBtn">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Attendance</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- LEAVE MODAL -->
+    <div class="modal" id="leaveModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h2>Add Leave</h2>
+                <button class="close-btn" id="closeLeaveModal">×</button>
+            </div>
+            <form id="leaveForm">
+                <div class="form-group"><label>Employee *</label><select id="leaveEmployee" required></select></div>
+                <div class="form-group">
+                    <label>Leave Type</label>
+                    <select id="leaveType">
+                        <option value="Paid Leave">Paid Leave</option>
+                        <option value="Sick Leave">Sick Leave</option>
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Unpaid Leave">Unpaid Leave</option>
+                    </select>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group"><label>From *</label><input type="date" id="leaveFrom" required></div>
+                    <div class="form-group"><label>To *</label><input type="date" id="leaveTo" required></div>
+                </div>
+                <div class="form-group"><label>Reason</label><textarea id="leaveReason" rows="3"></textarea></div>
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" id="cancelLeaveBtn">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Leave</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* FIREBASE CONFIG */
+        const firebaseConfig = {
+            apiKey: "AIzaSyDR6Ab5X3PelrvdAjLhPsCi_n4Qi6MHf-o",
+            authDomain: "employee-attendance-syst-33351.firebaseapp.com",
+            projectId: "employee-attendance-syst-33351",
+            storageBucket: "employee-attendance-syst-33351.firebasestorage.app",
+            messagingSenderId: "672059529814",
+            appId: "1:672059529814:web:971eefee24b9a2ba33b9f7"
+        };
+
+        /* GLOBAL DATA */
+        let db = null;
+        let employees = [];
+        let attendanceData = [];
+        let leaveData = [];
+        let payrollData = [];
+        let settings = {
+            officeStartTime: "09:00",
+            officeEndTime: "18:00",
+            gracePeriod: 15,
+            weeklyOff: 0,
+            overtimeRate: 100
+        };
+        let currentCalendarDate = new Date();
+        let selectedAttendanceDate = null;
+        let currentReportData = [];
+
+        /* INITIALIZE FIREBASE */
+        function initializeFirebase() {
+            try {
+                if (typeof firebase === "undefined") return false;
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+                db = firebase.firestore();
+                return true;
+            } catch (error) {
+                console.error("Firebase init error:", error);
+                return false;
+            }
+        }
+
+        /* HELPERS */
+        function $(id) { return document.getElementById(id); }
+        function todayString() {
+            const d = new Date();
+            return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+        }
+        function monthString(date) {
+            return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, "0");
+        }
+        function money(value) {
+            return "₹" + Number(value || 0).toLocaleString("en-IN", { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+        function escapeHTML(value) {
+            return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+        }
+        function showModal(id) { const m = $(id); if (m) m.classList.add("show"); }
+        function hideModal(id) { const m = $(id); if (m) m.classList.remove("show"); }
+        function safeValue(id) { const el = $(id); return el ? el.value : ""; }
+        function setText(id, value) { const el = $(id); if (el) el.textContent = value ?? ""; }
+
+        function setFirebaseStatus(type, text) {
+            const el = $("firebaseStatus");
+            if (!el) return;
+            el.className = "firebase-status " + type;
+            el.textContent = text;
+        }
+
+        /* MOBILE SIDEBAR TOGGLE LOGIC */
+        function initMobileSidebar() {
+            const hamburgerBtn = $("hamburgerBtn");
+            const closeSidebarBtn = $("closeSidebarBtn");
+            const sidebar = $("sidebar");
+            const overlay = $("sidebarOverlay");
+
+            function openSidebar() {
+                sidebar.classList.add("open");
+                overlay.classList.add("active");
+            }
+
+            function closeSidebar() {
+                sidebar.classList.remove("open");
+                overlay.classList.remove("active");
+            }
+
+            if (hamburgerBtn) hamburgerBtn.addEventListener("click", openSidebar);
+            if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", closeSidebar);
+            if (overlay) overlay.addEventListener("click", closeSidebar);
+        }
+
+        /* LOAD ALL DATA */
+        async function loadAllData() {
+            if (!db) {
+                setFirebaseStatus("error", "Firebase Error");
+                return;
+            }
+            try {
+                setFirebaseStatus("connecting", "Loading...");
+
+                const employeeSnap = await db.collection("employees").get();
+                employees = employeeSnap.docs.map(doc => ({ firestoreId: doc.id, ...doc.data() }));
+
+                const attendanceSnap = await db.collection("attendance").get();
+                attendanceData = attendanceSnap.docs.map(doc => ({ firestoreId: doc.id, ...doc.data() }));
+
+                const leaveSnap = await db.collection("leaves").get();
+                leaveData = leaveSnap.docs.map(doc => ({ firestoreId: doc.id, ...doc.data() }));
+
+                const payrollSnap = await db.collection("payroll").get();
+                payrollData = payrollSnap.docs.map(doc => ({ firestoreId: doc.id, ...doc.data() }));
+
+                const settingsDoc = await db.collection("settings").doc("office").get();
+                if (settingsDoc.exists) settings = { ...settings, ...settingsDoc.data() };
+
+                setFirebaseStatus("connected", "Connected");
+                refreshUI();
+            } catch (error) {
+                console.error("Firestore Load Error:", error);
+                setFirebaseStatus("error", "Firestore Error");
+            }
+        }
+
+        function refreshUI() {
+            updateDate();
+            updateDashboard();
+            renderEmployees();
+            renderEmployeeSelectors();
+            renderLeave();
+            renderAttendanceCalendar();
+            loadSettingsForm();
+        }
+
+        function updateDate() {
+            setText("currentDate", new Date().toLocaleDateString("en-IN", { weekday: "short", year: "numeric", month: "short", day: "numeric" }));
+        }
+
+        /* NAVIGATION LOGIC */
+        function initNavigation() {
+            const navItems = document.querySelectorAll(".nav-item, .mobile-nav-item");
+
+            navItems.forEach(button => {
+                button.addEventListener("click", () => {
+                    const page = button.dataset.page;
+
+                    document.querySelectorAll(".nav-item, .mobile-nav-item").forEach(item => {
+                        if (item.dataset.page === page) item.classList.add("active");
+                        else item.classList.remove("active");
+                    });
+
+                    document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+                    const target = $(page + "Page");
+                    if (target) target.classList.add("active");
+
+                    setText("pageTitle", button.textContent.trim());
+
+                    // Close mobile sidebar if open
+                    $("sidebar").classList.remove("open");
+                    $("sidebarOverlay").classList.remove("active");
+                });
+            });
+        }
+
+        /* DASHBOARD LOGIC */
+        function updateDashboard() {
+            const today = todayString();
+            setText("totalEmployees", employees.length);
+
+            const todayRecords = attendanceData.filter(a => a.date === today);
+            setText("presentToday", todayRecords.filter(a => a.status === "Full Day").length);
+            setText("halfDayToday", todayRecords.filter(a => a.status === "Half Day").length);
+            setText("absentToday", todayRecords.filter(a => a.status === "Absent").length);
+            setText("leaveToday", todayRecords.filter(a => a.status === "Paid Leave" || a.status === "Unpaid Leave").length);
+            setText("lateToday", todayRecords.filter(a => Number(a.late || 0) > 0).length);
+            setText("overtimeToday", todayRecords.reduce((sum, a) => sum + Number(a.overtime || 0), 0).toFixed(2));
+
+            const currentMonth = monthString(new Date());
+            const currentPayroll = payrollData.filter(p => p.month === currentMonth);
+            setText("monthlyPayroll", money(currentPayroll.reduce((sum, p) => sum + Number(p.netSalary || 0), 0)));
+
+            const tbody = $("dashboardAttendance");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            if (todayRecords.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">No attendance recorded today</td></tr>`;
+                return;
+            }
+
+            todayRecords.forEach(record => {
+                const employee = employees.find(e => e.employeeId === record.employeeId);
+                const hours = calculateWorkingHours(record.checkIn, record.checkOut);
+                tbody.innerHTML += `<tr>
+                    <td>${escapeHTML(record.employeeId)}</td>
+                    <td>${escapeHTML(employee?.name || "Unknown")}</td>
+                    <td>${escapeHTML(record.checkIn || "-")}</td>
+                    <td>${escapeHTML(record.checkOut || "-")}</td>
+                    <td>${hours}</td>
+                    <td>${statusEmoji(record.status)} ${escapeHTML(record.status || "-")}</td>
+                </tr>`;
+            });
+        }
+
+        /* EMPLOYEES LOGIC */
+        function renderEmployees() {
+            const tbody = $("employeeTable");
+            if (!tbody) return;
+            tbody.innerHTML = "";
+
+            const search = safeValue("employeeSearch").toLowerCase().trim();
+            const department = safeValue("employeeDepartmentFilter");
+
+            const filtered = employees.filter(e => {
+                const matchesSearch = !search || String(e.name || "").toLowerCase().includes(search) || String(e.employeeId || "").toLowerCase().includes(search);
+                const matchesDepartment = !department || e.department === department;
+                return matchesSearch && matchesDepartment;
+            });
+
+            if (filtered.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;">No Employees Found</td></tr>`;
+                return;
+            }
+
+            filtered.forEach(e => {
+                tbody.innerHTML += `<tr>
+                    <td>${escapeHTML(e.employeeId)}</td>
+                    <td>${escapeHTML(e.name)}</td>
+                    <td>${escapeHTML(e.phone || "-")}</td>
+                    <td>${escapeHTML(e.department || "-")}</td>
+                    <td>${escapeHTML(e.designation || "-")}</td>
+                    <td>${money(e.salary)}</td>
+                    <td>${escapeHTML(e.joiningDate || "-")}</td>
+                    <td>${escapeHTML(e.status || "Active")}</td>
+                    <td>
+                        <button class="action-btn edit-btn" onclick="editEmployee('${escapeHTML(e.firestoreId)}')">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteEmployee('${escapeHTML(e.firestoreId)}')">Delete</button>
+                    </td>
+                </tr>`;
+            });
+        }
+
+        /* ATTENDANCE CALENDAR & SUMMARY */
+        function renderAttendanceCalendar() {
+            const select = $("attendanceEmployeeSelect");
+            const calendar = $("attendanceCalendar");
+            if (!calendar) return;
+
+            const employeeId = select ? select.value : "";
+            calendar.innerHTML = "";
+
+            const year = currentCalendarDate.getFullYear();
+            const month = currentCalendarDate.getMonth();
+
+            setText("calendarTitle", currentCalendarDate.toLocaleDateString("en-IN", { month: "long", year: "numeric" }));
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+            let summary = { "Full Day": 0, "Half Day": 0, "Absent": 0, "Paid Leave": 0, "Unpaid Leave": 0, "Holiday": 0, "Weekly Off": 0, "Not Set": 0 };
+
+            for (let i = 0; i < firstDay; i++) {
+                calendar.innerHTML += `<div class="calendar-day empty"></div>`;
+            }
+
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(day).padStart(2, "0");
+                const record = attendanceData.find(a => a.employeeId === employeeId && a.date === date);
+                const dayOfWeek = new Date(year, month, day).getDay();
+                const isWeeklyOff = Number(settings.weeklyOff) === dayOfWeek;
+
+                let status = "Not Set";
+                if (record) status = record.status;
+                else if (isWeeklyOff) status = "Weekly Off";
+
+                if (employeeId) summary[status] = (summary[status] || 0) + 1;
+
+                let statusText = statusEmoji(status) + " " + (status === "Not Set" ? "--" : status);
+
+                calendar.innerHTML += `<div class="calendar-day" onclick="openAttendanceForDate('${date}')">
+                    <span class="day-number">${day}</span>
+                    <span class="day-status">${escapeHTML(statusText)}</span>
+                </div>`;
+            }
+
+            // Update Summary Stats
+            setText("summaryFullDay", summary["Full Day"]);
+            setText("summaryHalfDay", summary["Half Day"]);
+            setText("summaryAbsent", summary["Absent"]);
+            setText("summaryPaidLeave", summary["Paid Leave"]);
+            setText("summaryUnpaidLeave", summary["Unpaid Leave"]);
+            setText("summaryHoliday", summary["Holiday"]);
+            setText("summaryWeeklyOff", summary["Weekly Off"]);
+            setText("summaryNotSet", summary["Not Set"]);
+        }
+
+        function statusEmoji(status) {
+            const map = {
+                "Full Day": "🟢", "Half Day": "🟡", "Absent": "🔴",
+                "Paid Leave": "🔵", "Unpaid Leave": "🟣", "Holiday": "🟠",
+                "Weekly Off": "⚫", "Not Set": "⚪"
+            };
+            return map[status] || "⚪";
+        }
+
+        window.openAttendanceForDate = function(date) {
+            const employeeId = safeValue("attendanceEmployeeSelect");
+            if (!employeeId) {
+                alert("Please select an employee first!");
+                return;
+            }
+
+            const employee = employees.find(e => e.employeeId === employeeId);
+            const record = attendanceData.find(a => a.employeeId === employeeId && a.date === date);
+
+            if ($("attendanceEmployeeId")) $("attendanceEmployeeId").value = employeeId;
+            if ($("attendanceDate")) $("attendanceDate").value = date;
+            if ($("attendanceEmployeeName")) $("attendanceEmployeeName").value = employee?.name || "";
+            if ($("checkInTime")) $("checkInTime").value = record?.checkIn || "";
+            if ($("checkOutTime")) $("checkOutTime").value = record?.checkOut || "";
+            if ($("attendanceStatus")) $("attendanceStatus").value = record?.status || "Full Day";
+
+            selectedAttendanceDate = date;
+            showModal("attendanceModal");
+        };
+
+        function renderEmployeeSelectors() {
+            const selectors = [$("attendanceEmployeeSelect"), $("salaryEmployeeSelect"), $("leaveEmployee")];
+            selectors.forEach(select => {
+                if (!select) return;
+                const current = select.value;
+                select.innerHTML = `<option value="">Select Employee</option>`;
+                employees.filter(e => e.status !== "Inactive").forEach(e => {
+                    const opt = document.createElement("option");
+                    opt.value = e.employeeId;
+                    opt.textContent = e.employeeId + " - " + e.name;
+                    select.appendChild(opt);
+                });
+                if (current) select.value = current;
+            });
+        }
+
+        /* ATTENDANCE CALCULATIONS */
+        function timeToMinutes(time) {
+            if (!time) return 0;
+            const parts = time.split(":");
+            return Number(parts[0]) * 60 + Number(parts[1]);
+        }
+
+        function calculateWorkingHours(checkIn, checkOut) {
+            if (!checkIn || !checkOut) return "0 Hrs";
+            const start = timeToMinutes(checkIn);
+            const end = timeToMinutes(checkOut);
+            if (end <= start) return "0 Hrs";
+            const total = end - start;
+            return Math.floor(total / 60) + "h " + (total % 60) + "m";
+        }
+
+        /* INITIALIZATION */
+        document.addEventListener("DOMContentLoaded", async () => {
+            initializeFirebase();
+            initMobileSidebar();
+            initNavigation();
+            updateDate();
+
+            // Calendar Navigation
+            if ($("previousMonth")) $("previousMonth").addEventListener("click", () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderAttendanceCalendar();
+            });
+            if ($("nextMonth")) $("nextMonth").addEventListener("click", () => {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderAttendanceCalendar();
+            });
+
+            if ($("attendanceEmployeeSelect")) $("attendanceEmployeeSelect").addEventListener("change", renderAttendanceCalendar);
+
+            await loadAllData();
+        });
+    </script>
+</body>
+</html>
