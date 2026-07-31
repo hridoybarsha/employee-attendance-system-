@@ -1,0 +1,1256 @@
+/* =========================================================
+   EMPLOYEE PRO - COMPLETE STYLE.CSS
+   Firebase Employee Attendance Management System
+========================================================= */
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:Arial,Helvetica,sans-serif;
+    background:#f4f7fb;
+    color:#1f2937;
+    min-height:100vh;
+}
+
+button,
+input,
+select,
+textarea{
+    font-family:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+button:disabled{
+    cursor:not-allowed;
+    opacity:.6;
+}
+
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app{
+    display:flex;
+    min-height:100vh;
+}
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+    width:250px;
+    background:#111827;
+    color:white;
+    min-height:100vh;
+    position:fixed;
+    left:0;
+    top:0;
+    bottom:0;
+    overflow-y:auto;
+    z-index:50;
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding:22px 18px;
+    border-bottom:1px solid #374151;
+}
+
+.logo span{
+    font-size:32px;
+}
+
+.logo strong{
+    display:block;
+    font-size:18px;
+}
+
+.logo small{
+    display:block;
+    color:#9ca3af;
+    margin-top:3px;
+}
+
+nav{
+    padding:15px;
+}
+
+.nav-item{
+    display:block;
+    width:100%;
+    padding:13px 15px;
+    margin-bottom:7px;
+    border:0;
+    border-radius:8px;
+    background:transparent;
+    color:#d1d5db;
+    text-align:left;
+    font-size:15px;
+    transition:.2s ease;
+}
+
+.nav-item:hover,
+.nav-item.active{
+    background:#2563eb;
+    color:white;
+}
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+    margin-left:250px;
+    width:calc(100% - 250px);
+    min-height:100vh;
+}
+
+.topbar{
+    height:75px;
+    background:white;
+    border-bottom:1px solid #e5e7eb;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:15px 25px;
+    position:sticky;
+    top:0;
+    z-index:10;
+}
+
+.topbar h2{
+    font-size:20px;
+    color:#111827;
+}
+
+.topbar p{
+    color:#6b7280;
+    font-size:13px;
+    margin-top:4px;
+}
+
+/* =========================================================
+   FIREBASE STATUS
+========================================================= */
+
+.firebase-status{
+    padding:8px 14px;
+    border-radius:20px;
+    font-size:13px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.firebase-status.connecting{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.firebase-status.connected{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.firebase-status.error{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.page{
+    display:none;
+    padding:25px;
+}
+
+.page.active{
+    display:block;
+}
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px;
+}
+
+.page-header h1{
+    font-size:25px;
+    color:#111827;
+}
+
+.page-header p{
+    color:#6b7280;
+    margin-top:5px;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.primary-btn,
+.secondary-btn,
+.success-btn,
+.danger-btn{
+    border:0;
+    border-radius:7px;
+    padding:11px 16px;
+    font-weight:bold;
+    transition:.2s ease;
+}
+
+.primary-btn{
+    background:#2563eb;
+    color:white;
+}
+
+.primary-btn:hover{
+    background:#1d4ed8;
+}
+
+.secondary-btn{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.secondary-btn:hover{
+    background:#d1d5db;
+}
+
+.success-btn{
+    background:#16a34a;
+    color:white;
+}
+
+.success-btn:hover{
+    background:#15803d;
+}
+
+.danger-btn{
+    background:#dc2626;
+    color:white;
+}
+
+.danger-btn:hover{
+    background:#b91c1c;
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:25px;
+}
+
+.stats-grid.small{
+    grid-template-columns:repeat(3,1fr);
+}
+
+.stat-card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+    display:flex;
+    align-items:center;
+    gap:15px;
+}
+
+.stat-icon{
+    font-size:30px;
+}
+
+.stat-card span{
+    display:block;
+    color:#6b7280;
+    font-size:13px;
+}
+
+.stat-card strong{
+    display:block;
+    margin-top:6px;
+    font-size:24px;
+    color:#111827;
+}
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.card{
+    background:white;
+    border-radius:12px;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+    margin-bottom:25px;
+    overflow:hidden;
+}
+
+.card-header{
+    padding:18px 20px;
+    border-bottom:1px solid #e5e7eb;
+}
+
+.card-header h2{
+    font-size:18px;
+    color:#111827;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+    width:100%;
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th,
+td{
+    padding:13px 15px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+    white-space:nowrap;
+}
+
+th{
+    background:#f9fafb;
+    color:#374151;
+    font-size:13px;
+    font-weight:bold;
+}
+
+td{
+    font-size:14px;
+}
+
+tr:hover td{
+    background:#f9fafb;
+}
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.toolbar,
+.payroll-controls,
+.slip-controls,
+.report-controls{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.toolbar input,
+.toolbar select,
+.payroll-controls input,
+.payroll-controls select,
+.slip-controls input,
+.slip-controls select,
+.report-controls input,
+.report-controls select{
+    padding:11px 13px;
+    border:1px solid #d1d5db;
+    border-radius:7px;
+    background:white;
+    outline:none;
+}
+
+.toolbar input:focus,
+.toolbar select:focus,
+.payroll-controls input:focus,
+.payroll-controls select:focus,
+.slip-controls input:focus,
+.slip-controls select:focus,
+.report-controls input:focus,
+.report-controls select:focus{
+    border-color:#2563eb;
+}
+
+/* =========================================================
+   FORM
+========================================================= */
+
+.form-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.form-group{
+    margin-bottom:16px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:7px;
+    font-size:14px;
+    font-weight:bold;
+    color:#374151;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea{
+    width:100%;
+    padding:11px 12px;
+    border:1px solid #d1d5db;
+    border-radius:7px;
+    outline:none;
+    background:white;
+}
+
+.form-group textarea{
+    resize:vertical;
+    min-height:90px;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus{
+    border-color:#2563eb;
+    box-shadow:0 0 0 2px rgba(37,99,235,.08);
+}
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.55);
+    z-index:100;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    background:white;
+    width:100%;
+    max-width:700px;
+    max-height:90vh;
+    overflow-y:auto;
+    border-radius:12px;
+    padding:22px;
+    box-shadow:0 10px 40px rgba(0,0,0,.2);
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    border-bottom:1px solid #e5e7eb;
+    padding-bottom:15px;
+}
+
+.modal-header h2{
+    font-size:20px;
+    color:#111827;
+}
+
+.close-btn{
+    border:0;
+    background:none;
+    font-size:28px;
+    color:#6b7280;
+    line-height:1;
+}
+
+.close-btn:hover{
+    color:#111827;
+}
+
+.modal-actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    margin-top:20px;
+}
+
+/* =========================================================
+   ATTENDANCE
+========================================================= */
+
+.attendance-selector{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+}
+
+.attendance-selector label{
+    display:block;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.attendance-selector select{
+    width:100%;
+    max-width:400px;
+    padding:12px;
+    border:1px solid #d1d5db;
+    border-radius:7px;
+    background:white;
+}
+
+/* =========================================================
+   ATTENDANCE STATUS SELECT
+========================================================= */
+
+#attendanceStatus{
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#attendanceStatus option[value="Full Day"]{
+    color:#166534;
+}
+
+#attendanceStatus option[value="Night Duty"]{
+    color:#7c3aed;
+}
+
+#attendanceStatus option[value="Half Day"]{
+    color:#92400e;
+}
+
+#attendanceStatus option[value="Absent"]{
+    color:#991b1b;
+}
+
+#attendanceStatus option[value="Paid Leave"]{
+    color:#1d4ed8;
+}
+
+#attendanceStatus option[value="Unpaid Leave"]{
+    color:#6b7280;
+}
+
+#attendanceStatus option[value="Holiday"]{
+    color:#7e22ce;
+}
+
+#attendanceStatus option[value="Weekly Off"]{
+    color:#374151;
+}
+
+/* =========================================================
+   STATUS BADGES
+========================================================= */
+
+.status-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.status-full-day{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.status-night-duty{
+    background:#ede9fe;
+    color:#6d28d9;
+}
+
+.status-half-day{
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.status-absent{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+.status-paid-leave{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.status-unpaid-leave{
+    background:#f3f4f6;
+    color:#4b5563;
+}
+
+.status-holiday{
+    background:#f3e8ff;
+    color:#7e22ce;
+}
+
+.status-weekly-off{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+/* =========================================================
+   ATTENDANCE LEGEND
+========================================================= */
+
+.legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.legend-item{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    font-size:13px;
+}
+
+.legend-dot{
+    width:12px;
+    height:12px;
+    border-radius:50%;
+    display:inline-block;
+}
+
+.legend-full-day{
+    background:#16a34a;
+}
+
+.legend-night-duty{
+    background:#7c3aed;
+}
+
+.legend-half-day{
+    background:#f59e0b;
+}
+
+.legend-absent{
+    background:#dc2626;
+}
+
+.legend-leave{
+    background:#2563eb;
+}
+
+/* =========================================================
+   CALENDAR
+========================================================= */
+
+.calendar-card{
+    background:white;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+}
+
+.calendar-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+    gap:10px;
+}
+
+.calendar-header h2{
+    font-size:18px;
+}
+
+.calendar-weekdays,
+.calendar{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+}
+
+.calendar-weekdays span{
+    text-align:center;
+    font-weight:bold;
+    padding:10px;
+    color:#4b5563;
+}
+
+.calendar-day{
+    min-height:80px;
+    border:1px solid #e5e7eb;
+    padding:8px;
+    cursor:pointer;
+    transition:.2s ease;
+    background:white;
+}
+
+.calendar-day:hover{
+    background:#f3f4f6;
+}
+
+.calendar-day.empty{
+    background:#f9fafb;
+    cursor:default;
+}
+
+.calendar-day .day-number{
+    font-weight:bold;
+    display:block;
+    color:#111827;
+}
+
+.calendar-day .day-status{
+    display:block;
+    font-size:11px;
+    margin-top:7px;
+    line-height:1.4;
+}
+
+/* FULL DAY */
+
+.calendar-day.status-full-day{
+    background:#f0fdf4;
+    border-left:4px solid #16a34a;
+}
+
+/* NIGHT DUTY */
+
+.calendar-day.status-night-duty{
+    background:#faf5ff;
+    border-left:4px solid #7c3aed;
+}
+
+/* HALF DAY */
+
+.calendar-day.status-half-day{
+    background:#fffbeb;
+    border-left:4px solid #f59e0b;
+}
+
+/* ABSENT */
+
+.calendar-day.status-absent{
+    background:#fef2f2;
+    border-left:4px solid #dc2626;
+}
+
+/* LEAVE */
+
+.calendar-day.status-paid-leave{
+    background:#eff6ff;
+    border-left:4px solid #2563eb;
+}
+
+.calendar-day.status-unpaid-leave{
+    background:#f9fafb;
+    border-left:4px solid #6b7280;
+}
+
+/* HOLIDAY */
+
+.calendar-day.status-holiday{
+    background:#faf5ff;
+    border-left:4px solid #9333ea;
+}
+
+/* WEEKLY OFF */
+
+.calendar-day.status-weekly-off{
+    background:#f3f4f6;
+    border-left:4px solid #374151;
+}
+
+.calendar-actions{
+    display:flex;
+    gap:10px;
+    margin-top:20px;
+}
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+.settings-help{
+    padding:0 20px 20px;
+    color:#6b7280;
+    line-height:1.6;
+}
+
+.inline-form{
+    display:flex;
+    gap:10px;
+    padding:20px;
+    flex-wrap:wrap;
+}
+
+.inline-form input{
+    padding:11px;
+    border:1px solid #d1d5db;
+    border-radius:7px;
+    outline:none;
+}
+
+.inline-form input:focus{
+    border-color:#2563eb;
+}
+
+.employee-id-list{
+    padding:0 20px 20px;
+}
+
+.employee-id-item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px;
+    border:1px solid #e5e7eb;
+    border-radius:7px;
+    margin-bottom:8px;
+}
+
+/* =========================================================
+   SALARY SLIP
+========================================================= */
+
+.salary-slip{
+    max-width:800px;
+    background:white;
+    padding:30px;
+    margin:auto;
+    box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+.slip-header{
+    display:flex;
+    justify-content:space-between;
+    border-bottom:2px solid #111827;
+    padding-bottom:20px;
+    margin-bottom:20px;
+    gap:20px;
+}
+
+.employee-info{
+    margin-bottom:20px;
+}
+
+.employee-info p{
+    margin-bottom:8px;
+}
+
+.salary-slip table{
+    border:1px solid #d1d5db;
+}
+
+.salary-slip td{
+    border:1px solid #d1d5db;
+}
+
+.net-row{
+    font-weight:bold;
+    font-size:18px;
+}
+
+.print-btn{
+    margin-top:20px;
+}
+
+/* =========================================================
+   BACKUP
+========================================================= */
+
+.backup-box{
+    background:white;
+    padding:30px;
+    border-radius:12px;
+    display:flex;
+    gap:15px;
+    flex-wrap:wrap;
+    box-shadow:0 3px 15px rgba(0,0,0,.06);
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.action-btn{
+    border:0;
+    padding:7px 10px;
+    border-radius:5px;
+    margin-right:5px;
+    font-size:12px;
+    font-weight:bold;
+    transition:.2s ease;
+}
+
+.edit-btn{
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.edit-btn:hover{
+    background:#bfdbfe;
+}
+
+.delete-btn{
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.delete-btn:hover{
+    background:#fecaca;
+}
+
+/* =========================================================
+   REPORT
+========================================================= */
+
+.report-controls{
+    background:white;
+    padding:15px;
+    border-radius:10px;
+    box-shadow:0 3px 15px rgba(0,0,0,.05);
+}
+
+/* =========================================================
+   PAYROLL INPUT
+========================================================= */
+
+#payrollTable input{
+    width:90px;
+    padding:7px;
+    border:1px solid #d1d5db;
+    border-radius:5px;
+}
+
+#payrollTable input:focus{
+    outline:none;
+    border-color:#2563eb;
+}
+
+/* =========================================================
+   UTILITY
+========================================================= */
+
+.hidden{
+    display:none !important;
+}
+
+.text-center{
+    text-align:center;
+}
+
+.text-right{
+    text-align:right;
+}
+
+.mt-10{
+    margin-top:10px;
+}
+
+.mt-20{
+    margin-top:20px;
+}
+
+.mb-10{
+    margin-bottom:10px;
+}
+
+.mb-20{
+    margin-bottom:20px;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.loading{
+    text-align:center;
+    padding:30px;
+    color:#6b7280;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.empty-state{
+    text-align:center;
+    padding:40px 20px;
+    color:#6b7280;
+}
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media(max-width:1000px){
+
+    .stats-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .sidebar{
+        width:220px;
+    }
+
+    .main{
+        margin-left:220px;
+        width:calc(100% - 220px);
+    }
+
+}
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media(max-width:768px){
+
+    .app{
+        display:block;
+    }
+
+    .sidebar{
+        width:100%;
+        position:relative;
+        min-height:auto;
+    }
+
+    .main{
+        margin-left:0;
+        width:100%;
+    }
+
+    nav{
+        display:grid;
+        grid-template-columns:repeat(2,1fr);
+        gap:5px;
+    }
+
+    .nav-item{
+        margin-bottom:0;
+    }
+
+    .topbar{
+        position:relative;
+        height:auto;
+        min-height:75px;
+        padding:15px;
+        gap:10px;
+    }
+
+    .topbar h2{
+        font-size:18px;
+    }
+
+    .firebase-status{
+        font-size:11px;
+        padding:7px 10px;
+    }
+
+    .page{
+        padding:15px;
+    }
+
+    .stats-grid,
+    .stats-grid.small{
+        grid-template-columns:1fr;
+    }
+
+    .form-grid{
+        grid-template-columns:1fr;
+    }
+
+    .page-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .page-header .primary-btn{
+        width:100%;
+    }
+
+    .calendar-weekdays span{
+        font-size:11px;
+        padding:7px 2px;
+    }
+
+    .calendar-day{
+        min-height:65px;
+        padding:5px;
+    }
+
+    .calendar-day .day-number{
+        font-size:12px;
+    }
+
+    .calendar-day .day-status{
+        font-size:9px;
+        margin-top:4px;
+    }
+
+    .calendar-header{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .calendar-actions{
+        width:100%;
+    }
+
+    .calendar-actions button{
+        flex:1;
+    }
+
+    .modal{
+        padding:10px;
+    }
+
+    .modal-box{
+        max-height:95vh;
+        padding:17px;
+    }
+
+    .slip-header{
+        flex-direction:column;
+    }
+
+    .salary-slip{
+        padding:18px;
+    }
+
+    .toolbar,
+    .payroll-controls,
+    .slip-controls,
+    .report-controls{
+        flex-direction:column;
+    }
+
+    .toolbar input,
+    .toolbar select,
+    .payroll-controls input,
+    .payroll-controls select,
+    .slip-controls input,
+    .slip-controls select,
+    .report-controls input,
+    .report-controls select{
+        width:100%;
+    }
+
+    .toolbar button,
+    .payroll-controls button,
+    .slip-controls button,
+    .report-controls button{
+        width:100%;
+    }
+
+}
+
+/* =========================================================
+   VERY SMALL MOBILE
+========================================================= */
+
+@media(max-width:480px){
+
+    .logo{
+        padding:17px 15px;
+    }
+
+    .logo span{
+        font-size:26px;
+    }
+
+    .logo strong{
+        font-size:16px;
+    }
+
+    nav{
+        grid-template-columns:1fr;
+    }
+
+    .topbar{
+        flex-direction:column;
+        align-items:flex-start;
+    }
+
+    .firebase-status{
+        align-self:flex-start;
+    }
+
+    .stat-card{
+        padding:16px;
+    }
+
+    .stat-card strong{
+        font-size:21px;
+    }
+
+    .modal-actions{
+        flex-direction:column;
+    }
+
+    .modal-actions button{
+        width:100%;
+    }
+
+}
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print{
+
+    body *{
+        visibility:hidden;
+    }
+
+    .salary-slip,
+    .salary-slip *{
+        visibility:visible;
+    }
+
+    .salary-slip{
+        position:absolute;
+        left:0;
+        top:0;
+        width:100%;
+        box-shadow:none;
+        margin:0;
+        padding:20px;
+    }
+
+    .print-btn{
+        display:none !important;
+    }
+
+}
