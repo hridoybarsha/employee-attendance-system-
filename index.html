@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+  <!-- Mobile Responsive -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Employee Pro</title>
+
+  <!-- Icons -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  >
+
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <!-- =========================
+       APP HEADER
+  ========================== -->
+  <header class="app-header">
+
+    <div class="header-left">
+      <button id="menuBtn" class="menu-btn">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <div class="brand">
+        <div class="brand-name">Employee Pro</div>
+        <div class="brand-version">V1.0</div>
+      </div>
+    </div>
+
+    <div class="admin-profile">
+      <div class="avatar">A</div>
+
+      <div>
+        <strong>Administrator</strong>
+        <small>Admin</small>
+      </div>
+    </div>
+
+  </header>
+
+
+  <!-- =========================
+       SIDEBAR
+  ========================== -->
+  <aside id="sidebar" class="sidebar">
+
+    <div class="sidebar-brand">
+      <h2>Employee Pro</h2>
+      <span>Management System</span>
+    </div>
+
+    <nav class="sidebar-menu">
+
+      <button data-page="dashboard">
+        <i class="fa-solid fa-house"></i>
+        <span>Dashboard</span>
+      </button>
+
+      <button data-page="employees">
+        <i class="fa-solid fa-users"></i>
+        <span>Employees</span>
+      </button>
+
+      <button data-page="attendance" class="active">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Attendance</span>
+      </button>
+
+      <button data-page="leave">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span>Leave</span>
+      </button>
+
+      <button data-page="payroll">
+        <i class="fa-solid fa-indian-rupee-sign"></i>
+        <span>Payroll</span>
+      </button>
+
+      <button data-page="salary">
+        <i class="fa-solid fa-receipt"></i>
+        <span>Salary Slip</span>
+      </button>
+
+      <button data-page="reports">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>Reports</span>
+      </button>
+
+      <button data-page="settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Settings</span>
+      </button>
+
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="firebase-status">
+        <span class="status-dot"></span>
+        Firebase Connected
+      </div>
+
+      <p>Employee Pro v1.0</p>
+    </div>
+
+  </aside>
+
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================== -->
+  <main id="mainContent" class="main-content">
+
+    <!-- TOP NAVIGATION -->
+    <div class="top-navigation">
+
+      <button data-page="dashboard">
+        <i class="fa-solid fa-house"></i>
+        <span>Dashboard</span>
+      </button>
+
+      <button data-page="employees">
+        <i class="fa-solid fa-users"></i>
+        <span>Employees</span>
+      </button>
+
+      <button data-page="attendance" class="active">
+        <i class="fa-solid fa-circle-check"></i>
+        <span>Attendance</span>
+      </button>
+
+      <button data-page="leave">
+        <i class="fa-solid fa-calendar-days"></i>
+        <span>Leave</span>
+      </button>
+
+      <button data-page="payroll">
+        <i class="fa-solid fa-indian-rupee-sign"></i>
+        <span>Payroll</span>
+      </button>
+
+      <button id="moreBtn">
+        <i class="fa-solid fa-ellipsis"></i>
+        <span>More</span>
+      </button>
+
+    </div>
+
+
+    <!-- FIREBASE STATUS -->
+    <div class="connection-box">
+      <i class="fa-solid fa-circle-check"></i>
+
+      <div>
+        <strong>Firebase Connected</strong>
+        <span>Your data is synced successfully.</span>
+      </div>
+    </div>
+
+
+    <!-- =========================
+         ATTENDANCE PAGE
+    ========================== -->
+    <section id="attendancePage" class="page active-page">
+
+      <div class="page-heading">
+
+        <div>
+          <h1>
+            <i class="fa-solid fa-circle-check"></i>
+            Attendance
+          </h1>
+
+          <p>Manage employee daily attendance.</p>
+        </div>
+
+        <div class="today-date">
+          <i class="fa-regular fa-calendar"></i>
+          <span id="todayDate">Fri, 31 Jul 2026</span>
+        </div>
+
+      </div>
+
+
+      <!-- EMPLOYEE SELECT -->
+      <div class="attendance-controls">
+
+        <div class="employee-select-box">
+
+          <label>Select Employee</label>
+
+          <div class="select-wrapper">
+
+            <i class="fa-solid fa-users"></i>
+
+            <select id="employeeSelect">
+              <option value="">Select Employee</option>
+              <option value="1112234">1112234 - Raised</option>
+              <option value="8116598095">8116598095 - Rajesh Saha</option>
+              <option value="1112232">1112232 - Hriday</option>
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <button id="markAllPresent" class="primary-btn">
+          <i class="fa-solid fa-check"></i>
+          Mark All Present
+        </button>
+
+      </div>
+
+
+      <!-- =========================
+           CALENDAR
+      ========================== -->
+      <div class="calendar-card">
+
+        <div class="calendar-header">
+
+          <button id="prevMonth" class="calendar-arrow">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+
+          <h2 id="calendarTitle">July 2026</h2>
+
+          <button id="nextMonth" class="calendar-arrow">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+        </div>
+
+
+        <!-- WEEK DAYS -->
+        <div class="weekdays">
+
+          <div>Sun</div>
+          <div>Mon</div>
+          <div>Tue</div>
+          <div>Wed</div>
+          <div>Thu</div>
+          <div>Fri</div>
+          <div>Sat</div>
+
+        </div>
+
+
+        <!-- CALENDAR DAYS -->
+        <div id="calendarDays" class="calendar-days"></div>
+
+      </div>
+
+
+      <!-- =========================
+           LEGEND
+      ========================== -->
+      <div class="legend-card">
+
+        <div class="legend-item">
+          <span class="legend-dot full-day"></span>
+          Full Day
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot half-day"></span>
+          Half Day
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot absent"></span>
+          Absent
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot paid-leave"></span>
+          Paid Leave
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot unpaid-leave"></span>
+          Unpaid Leave
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot holiday"></span>
+          Holiday
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot weekly-off"></span>
+          Weekly Off
+        </div>
+
+        <div class="legend-item">
+          <span class="legend-dot not-set"></span>
+          Not Set
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           ATTENDANCE SUMMARY
+      ========================== -->
+      <div class="summary-card">
+
+        <div class="summary-heading">
+          <h2>Attendance Summary</h2>
+          <span id="summaryMonth">July 2026</span>
+        </div>
+
+        <div class="summary-grid">
+
+          <div class="summary-box green">
+            <span>Full Day</span>
+            <strong id="fullDayCount">0</strong>
+          </div>
+
+          <div class="summary-box yellow">
+            <span>Half Day</span>
+            <strong id="halfDayCount">0</strong>
+          </div>
+
+          <div class="summary-box red">
+            <span>Absent</span>
+            <strong id="absentCount">0</strong>
+          </div>
+
+          <div class="summary-box blue">
+            <span>Paid Leave</span>
+            <strong id="paidLeaveCount">0</strong>
+          </div>
+
+          <div class="summary-box purple">
+            <span>Unpaid Leave</span>
+            <strong id="unpaidLeaveCount">0</strong>
+          </div>
+
+          <div class="summary-box orange">
+            <span>Holiday</span>
+            <strong id="holidayCount">0</strong>
+          </div>
+
+          <div class="summary-box gray">
+            <span>Weekly Off</span>
+            <strong id="weeklyOffCount">0</strong>
+          </div>
+
+          <div class="summary-box light-gray">
+            <span>Not Set</span>
+            <strong id="notSetCount">0</strong>
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         OTHER PAGES
+    ========================== -->
+
+    <section id="dashboardPage" class="page">
+
+      <div class="simple-page">
+        <i class="fa-solid fa-house page-icon"></i>
+        <h1>Dashboard</h1>
+        <p>Manage your employees and daily operations.</p>
+      </div>
+
+    </section>
+
+
+    <section id="employeesPage" class="page">
+
+      <div class="simple-page">
+        <i class="fa-solid fa-users page-icon"></i>
+        <h1>Employees</h1>
+        <p>Manage employee information.</p>
+      </div>
+
+    </section>
+
+
+    <section id="leavePage" class="page">
+
+      <div class="simple-page">
+        <i class="fa-solid fa-calendar-days page-icon"></i>
+        <h1>Leave</h1>
+        <p>Manage employee leave requests.</p>
+      </div>
+
+    </section>
+
+
+    <section id="payrollPage" class="page">
+
+      <div class="simple-page">
+        <i class="fa-solid fa-indian-rupee-sign page-icon"></i>
+        <h1>Payroll</h1>
+        <p>Manage monthly payroll.</p>
+      </div>
+
+    </section>
+
+
+    <section id="salaryPage" class="page">
+
+      <div class="simple-page">
+        <i class="fa-solid fa-receipt page-icon"></i>
+        <h1>Salary Slip</h1>
+        <p>Generate employee salary slips.</p>
+      </div>
+
+    </section>
+
+
+    <section id="reportsPage" class="page">
+
+      <div class="simple-page">
+        <i class="fa-solid fa-chart-column page-icon"></i>
+        <h1>Reports</h1>
+        <p>View employee reports.</p>
+      </div>
+
+    </section>
+
+
+    <section id="settingsPage" class="page">
+
+      <div class="simple-page">
+        <i class="fa-solid fa-gear page-icon"></i>
+        <h1>Settings</h1>
+        <p>Manage application settings.</p>
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       ATTENDANCE STATUS MODAL
+  ========================== -->
+  <div id="statusModal" class="modal">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h3>Attendance Status</h3>
+
+        <button id="closeModal">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+
+      </div>
+
+      <p>Select attendance status</p>
+
+      <div class="status-buttons">
+
+        <button data-status="Full Day" class="status-btn full-day">
+          Full Day
+        </button>
+
+        <button data-status="Half Day" class="status-btn half-day">
+          Half Day
+        </button>
+
+        <button data-status="Absent" class="status-btn absent">
+          Absent
+        </button>
+
+        <button data-status="Paid Leave" class="status-btn paid-leave">
+          Paid Leave
+        </button>
+
+        <button data-status="Unpaid Leave" class="status-btn unpaid-leave">
+          Unpaid Leave
+        </button>
+
+        <button data-status="Holiday" class="status-btn holiday">
+          Holiday
+        </button>
+
+        <button data-status="Weekly Off" class="status-btn weekly-off">
+          Weekly Off
+        </button>
+
+        <button data-status="Not Set" class="status-btn not-set">
+          Not Set
+        </button>
+
+      </div>
+
+      <button id="cancelModal" class="cancel-btn">
+        Cancel
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       MOBILE BOTTOM NAV
+  ========================== -->
+  <nav class="bottom-nav">
+
+    <button data-page="dashboard">
+      <i class="fa-solid fa-house"></i>
+      <span>Home</span>
+    </button>
+
+    <button id="searchBtn">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      <span>Search</span>
+    </button>
+
+    <button id="addBtn" class="add-button">
+      <i class="fa-solid fa-plus"></i>
+    </button>
+
+    <button id="notificationBtn">
+      <i class="fa-regular fa-bell"></i>
+      <span>Notifications</span>
+    </button>
+
+    <button id="profileBtn">
+      <i class="fa-regular fa-user"></i>
+      <span>Profile</span>
+    </button>
+
+  </nav>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+  <script src="script.js"></script>
+
+</body>
+</html>
